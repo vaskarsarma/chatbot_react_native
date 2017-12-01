@@ -1,0 +1,320 @@
+import React, {Component} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableOpacity,
+  Keyboard,
+  ScrollView
+} from 'react-native';
+
+import PropTypes from 'prop-types';
+import Dialogflow from "react-native-dialogflow";
+import Icon from 'react-native-vector-icons/Ionicons';
+import Tts from 'react-native-tts';
+
+import ReversedFlatList from 'react-native-reversed-flat-list';
+
+export default class Chat extends Component {
+    
+    constructor(props)
+    {
+        super(props);
+    
+        //console.log(this.props.visitorname);
+    
+        this.state = {
+              //result: "",
+              listeningState: "not started",
+              audioLevel: 0,
+              //query:"user says ...",
+              //answer:"system reply ... ",
+              messages: [
+                  {
+                      query: "",
+                      answer: "",
+                      //message_id: ''
+                  }
+              ],
+              //queryArray: [],
+              //answerArray:[]
+          };
+
+        const apikey=props.apikey;
+    
+        Dialogflow.setConfiguration(
+              //"492a281b4eb64b8cbc326a5ac84d1cbe", Dialogflow.LANG_ENGLISH_GB 
+              //"475db972aaf84669b935b8733a8a0f9a",Dialogflow.LANG_ENGLISH_GB
+              apikey,Dialogflow.LANG_ENGLISH_GB
+          );
+    
+          //TTS-config
+          Tts.speak('Welcome ' + props.visitorname);
+          Tts.setDucking(true);
+          Tts.setDefaultLanguage('en-IE');
+          Tts.setDefaultRate(0.4);
+          Tts.setDefaultPitch(1.0);
+          
+          // Hide that keyboard!
+          Keyboard.dismiss();
+    }
+
+    componentDidMount=() => {
+        Dialogflow.requestEvent("WELCOME", null, 
+        r=>{
+            console.log(r);
+
+            var sysReply="";
+            if(r.result.fulfillment.speech != "")
+            {
+                sysReply=r.result.fulfillment.speech;
+                Tts.speak(sysReply); 
+            
+            this.setState({
+                messages: [...this.state.messages,{
+                    query:'',
+                    answer: sysReply,
+                    //message_id: 1
+            }]
+
+            });
+        }
+        }, 
+        e=>console.log(e) )};
+    
+    render(){
+    
+       //Dialogflow.requestEvent("WELCOME", null, r=>console.log(r), e=>console.log(e));
+    
+        return(
+            
+        <View style={styles.container}>
+
+            <ScrollView> 
+{/*                     
+                <View>
+                    <Text>{" "}</Text>
+                </View>                 */}
+{/*                 
+                <View style={{flex:1, flexDirection: 'row',padding: 10}}>
+                        <View style={styles.personcircle}>
+                            <Icon name="ios-person" size={40} color="#ffffff" ></Icon>
+                        </View>
+                        <View>
+                            <Text>{" "}</Text>
+                        </View>
+                        <View style={{flex:1, flexDirection: 'column', alignSelf: 'flex-start', backgroundColor: 'rgba(9, 206, 209, 0.46)', borderRadius: 20}}>
+                            <Text numberOfLines= {3} ellipsizeMode='tail' style={styles.inputtext}>{this.state.query}</Text>
+                        </View>
+                </View> */}
+                
+                {/* numberOfLines= {3} ellipsizeMode='tail' */}
+{/*                 
+                <View style={{flex:1,flexDirection: 'row',justifyContent:'flex-end', alignSelf: 'center',padding: 10}}>
+                    <View style={{flex:1,flexDirection: 'column', justifyContent:'flex-end',alignSelf: 'flex-start', marginLeft:20, backgroundColor: 'rgba(9, 206, 209, 0.46)',borderRadius: 20}}>
+                        <Text style={styles.inputtext}>{this.state.answer}</Text>
+                    </View>
+                    <View >
+                        <Text>{" "}</Text>
+                    </View>
+                    <View style={styles.systemcircle}>
+                        <Icon name="logo-android" size={40} color="#ffffff" ></Icon>
+                    </View>
+                </View> */}
+
+                {/* <View> */}
+                    {
+                        this.state.messages.map(result => {
+                            const query=result.query;
+                            const answer=result.answer;
+                            return (
+                            <View>
+                                {(query !== "")?(
+                                    <View style={{flex:1, flexDirection: 'row',padding: 10}}>
+                                        <View style={styles.personcircle}>
+                                            <Icon name="ios-person" size={40} color="#ffffff" ></Icon>
+                                        </View>
+                                        <View>
+                                            <Text>{" "}</Text>
+                                        </View>
+                                        <View style={{flex:1, flexDirection: 'column', alignSelf: 'flex-start', backgroundColor: 'rgba(9, 206, 209, 0.46)', borderRadius: 20}}>
+                                            <Text numberOfLines= {3} ellipsizeMode='tail' style={styles.inputtext}>{query}</Text>
+                                            {/* <Text numberOfLines= {3} ellipsizeMode='tail' style={styles.inputtext}>{this.state.query}</Text> */}
+                                        </View>
+                                    </View>
+                                ):(<View></View>)}
+                        
+                                {(answer !== "")?(                 
+                                    <View style={{flex:1,flexDirection: 'row',justifyContent:'flex-end', alignSelf: 'center',padding: 10}}>
+                                        <View style={{flex:1,flexDirection: 'column', justifyContent:'flex-end',alignSelf: 'flex-start', marginLeft:20, backgroundColor: 'rgba(9, 206, 209, 0.46)',borderRadius: 20}}>
+                                            {/* <Text style={styles.inputtext}>{this.state.answer}</Text> */}
+                                            <Text style={styles.inputtext}>{answer}</Text>
+                                        </View>
+                                        <View >
+                                            <Text>{" "}</Text>
+                                        </View>
+                                        <View style={styles.systemcircle}>
+                                            <Icon name="logo-android" size={40} color="#ffffff" ></Icon>
+                                        </View>
+                                    </View>
+                                ):(<View></View>)} 
+                            </View> 
+                            );
+                        })
+                    }
+            </ScrollView> 
+    
+            <View style={{flex:1, flexDirection: 'row',alignSelf: 'center', paddingBottom: 65, height: 65}}>
+                <View style={styles.iconstyle}>
+                    <TouchableOpacity>
+                      <Icon 
+                      name="ios-mic" 
+                      size={40} 
+                      color={this.state.listeningState=="started"? "#ffffff" :"#ff0000"} 
+                      onPress={() => {
+    
+                        Dialogflow.onListeningStarted(() => {
+                            this.setState({listeningState: "started"});
+                        });
+    
+                        Dialogflow.onListeningCanceled(() => {
+                            this.setState({listeningState: "canceled"});
+                        });
+    
+                        Dialogflow.onListeningFinished(() => {
+                            this.setState({listeningState: "finished"});
+                        }); 
+    
+                        Dialogflow.onAudioLevel(level => {
+                            this.setState({audioLevel: level});
+                        });
+    
+                        Dialogflow.startListening(results => {
+                            console.log(results);
+                            var sysReply="";
+                            if(results.result.fulfillment.speech == "")
+                            {
+                            sysReply="Please try again!";
+                            }
+                            else
+                            {
+                            sysReply=results.result.fulfillment.speech;
+                            }
+    
+                            Tts.speak(sysReply);                            
+    
+                            this.setState({
+                                //query: results.result.resolvedQuery,
+                                //answer: sysReply,
+                                //queryArray: [...this.state.queryArray,results.result.resolvedQuery],
+                                //answerArray: [...this.state.answerArray,sysReply],
+                                // messages:  Object.assign({},this.state.messages,
+                                //     {
+                                //         query:results.result.resolvedQuery,
+                                //         answer: sysReply,
+                                //         message_id: 1
+                                //     })
+                                messages: [...this.state.messages,{
+                                        query:results.result.resolvedQuery,
+                                        answer: sysReply,
+                                        //message_id: 1
+                                }]
+                                });
+                        }, error => {
+                            var errorTxt="Could not get you, Can you please say again";
+                            Tts.speak(errorTxt);
+                            this.setState({
+                                //query: "?",
+                                //answer: errorTxt +"!",
+                                //queryArray: [...this.state.queryArray,"?"],
+                                //answerArray: [...this.state.answerArray,errorTxt +"!"],
+                                // messages:  Object.assign({},this.state.messages,
+                                //     {
+                                //         query:"?",
+                                //         answer: errorTxt +"!",
+                                //         message_id: 1
+                                //     })
+                                messages:  [...this.state.messages,
+                                    {
+                                        query:"?",
+                                        answer: errorTxt +"!",
+                                        //message_id: 1
+                                    }]
+
+                                });
+                        });
+                    }}
+                    />
+                    </TouchableOpacity>
+                </View>
+            </View> 
+        </View>
+        ); 
+    }
+}
+
+Chat.defaultProps={
+    visitorname : 'Vaskar Sarma',
+    apikey: '475db972aaf84669b935b8733a8a0f9a'
+};
+
+Chat.propTypes={
+    visitorname: PropTypes.string,
+    apikey: PropTypes.string
+};
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      //backgroundColor:'#083002',
+      marginTop: 20,
+  },
+  inputtext:{
+    fontSize: 20,
+    textAlign: 'left',
+    margin: 10,
+    color: "#000000"   
+  },
+  welcome: {
+    fontSize: 30,
+    textAlign: 'center',
+    margin: 10,
+    color: "#083002"
+  },
+  iconstyle:
+  {
+   width: 60,
+   height: 60,
+   borderRadius: 60/2,
+   //backgroundColor: '#0A81D0',
+   backgroundColor: '#083002',
+   justifyContent:'center',
+   alignItems: 'center',
+   borderWidth: 1,
+   borderColor: '#000',
+  },
+  personcircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 60/2,
+    //backgroundColor: '#2FE30B',
+    backgroundColor: '#083002',
+    alignItems: 'center',
+    justifyContent:'center',
+    borderWidth: 1,
+    borderColor: '#000',
+},
+systemcircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 60/2,
+    //backgroundColor: '#142FB2',
+    backgroundColor: '#083002',
+    alignItems: 'center',
+    justifyContent:'center',
+    borderWidth: 1,
+    borderColor: '#000',
+}  
+});
+
