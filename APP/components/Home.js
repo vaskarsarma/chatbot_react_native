@@ -1,3 +1,8 @@
+/**
+ * Chat-Bot using react-native
+ * by Vaskar Sarma
+ */
+
 import React, {Component} from 'react';
 
 import {AppRegistry, Text, View, StyleSheet, TextInput, TouchableOpacity,Picker} from 'react-native';
@@ -52,8 +57,6 @@ export default class Home extends Component {
               
                <TouchableOpacity 
                onPress={()=>{
-                     //console.log(this.state.name);
-                     //alert(this.state.name);
                     if(this.state.key == "")
                     {
                         alert("Please select a valid Bot Key");

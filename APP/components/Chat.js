@@ -1,3 +1,8 @@
+/**
+ * Chat-Bot using react-native
+ * by Vaskar Sarma
+ */
+
 import React, {Component} from 'react';
 import {
   StyleSheet,
@@ -40,8 +45,6 @@ export default class Chat extends Component {
         const apikey=props.apikey;
     
         Dialogflow.setConfiguration(
-              //"492a281b4eb64b8cbc326a5ac84d1cbe", Dialogflow.LANG_ENGLISH_GB 
-              //"475db972aaf84669b935b8733a8a0f9a",Dialogflow.LANG_ENGLISH_GB
               apikey,Dialogflow.LANG_ENGLISH_GB
           );
     
@@ -52,10 +55,6 @@ export default class Chat extends Component {
           Tts.setDefaultRate(0.99,true);
           Tts.setDefaultPitch(1.0);
 
-          //Tts.addEventListener('tts-start', (event) => console.log("start", event));
-          //Tts.addEventListener('tts-finish', (event) => console.log("finish", event));
-          //Tts.addEventListener('tts-cancel', (event) => console.log("cancel", event));
-          
           // Hide that keyboard!
           Keyboard.dismiss();
     }
@@ -63,10 +62,6 @@ export default class Chat extends Component {
     componentDidMount=() => {
         Dialogflow.requestEvent("start", null, 
         r=>{
-            console.log(r);
-
-            //Tts.voices().then(voices => console.log(voices));
-
             var sysReply="";
             var commands="";
             var imageurl="";
@@ -88,7 +83,6 @@ export default class Chat extends Component {
                             {
                                 commands += "To know more, please try these below commands";
                                 item.replies.map((reply)=>{
-                                    //commands += " " + reply;
                                     replies.push(reply);
                                 });
                             }
@@ -98,9 +92,6 @@ export default class Chat extends Component {
 
             Tts.speak(sysReply + " " + commands); 
 
-            //console.log(imageurl);
-            //console.log(replies);
-            
             this.setState({
                 messages: [...this.state.messages,{
                     query:'',
@@ -157,9 +148,7 @@ export default class Chat extends Component {
                     {
                         if(item.replies != null)
                         {
-                            //commands += "To know more, please try these below commands";
                             item.replies.map((reply)=>{
-                                //commands += " " + reply;
                                 replies.push(reply);
                             });
                         }
@@ -196,8 +185,6 @@ export default class Chat extends Component {
     }
 
     GetAPIRespForComd = (s,_this) => {
-        //console.log(this.state.messages);
-
         if(s != "")
         {  
         Dialogflow.requestQuery((s), 
@@ -219,7 +206,6 @@ export default class Chat extends Component {
                 if(results.result.fulfillment.messages != null)
                 {
                 results.result.fulfillment.messages.map((item)=>{
-                    //console.log(item.type);
       
                     if(item.type ==3)
                        imageurl=item.imageUrl;
@@ -228,9 +214,7 @@ export default class Chat extends Component {
                     {
                         if(item.replies != null)
                         {
-                            //commands += "To know more, please try these below commands";
                             item.replies.map((reply)=>{
-                                //commands += " " + reply;
                                 replies.push(reply);
                             });
                         }
@@ -279,22 +263,6 @@ export default class Chat extends Component {
     doNothing =() =>{
         //alert("please add text");
     }
-
-    // PauseListening =() =>{
-    //     console.log("clicked pause");
-    //     Tts.pause();
-    // }
-
-    // ResumeListening =() =>{
-    //     console.log("clicked resume");
-    //     Tts.resume();
-    // }
-
-    // StopListening =() =>{
-    //     console.log("clicked stop");
-    //     //Tts.stop();
-    //     Tts.addEventListener('tts-cancel', (event) => console.log("cancel", event));
-    // }
 
     render(){
         var _this = this;
@@ -372,9 +340,7 @@ export default class Chat extends Component {
                         })
                     }
             </ScrollView> 
-            {/* style={{flex:1, flexDirection: 'row',alignSelf: 'center', paddingBottom: 65, height: 65}} 
-            style={{flex:1, flexDirection: 'row', alignSelf: 'flex-start', paddingBottom: 50, height: 50}}
-            */}
+
             {(this.state.messages !=null && this.state.messages.length > 0)?(
             <View style={{flexDirection: 'row', justifyContent:'center', alignContent:'center', height: 50, margin: 2}}>
                 <View style={styles.footersection}>
@@ -403,8 +369,6 @@ export default class Chat extends Component {
                       onPress={() => this.GetAPIResponse()}
                     />
                     </TouchableOpacity>
-                {/* </View>
-                <View > */}
                     <TouchableOpacity style={styles.iconstyle}>
                     <Icon 
                       name="ios-close" 
@@ -414,51 +378,11 @@ export default class Chat extends Component {
                     />
                     </TouchableOpacity>
                 </View>
-                {/* <View style={styles.iconstyle}>
-                    <TouchableOpacity>
-                    <Icon 
-                      name="ios-pause" 
-                      size={40} 
-                      color="#ffffff" 
-                      onPress={()=> Tts.pause()}
-                    />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.iconstyle}>
-                    <TouchableOpacity>
-                    <Icon 
-                      name="ios-play" 
-                      size={40} 
-                      color="#ffffff" 
-                      onPress={()=> Tts.resume()}
-                    /> 
-                    </TouchableOpacity>
-                </View> */}
             </View>):(<View></View>)}
         </View>
         ); 
     }
 }
-// class ListView extends React.Component {
-//     render() {
-//       return (
-//            this.props.commands.map((command, key) => <ListViewItem key={'listview-${key}'} command={command} />)
-//       );
-//     }
-//   }
-// class ListViewItem extends React.Component {
-//     render() {
-//       return (
-//         <View style={styles.commandstyle}>
-//             <TouchableOpacity
-//             // onPress={() => Chat.GetAPIResponse()}>
-//             >
-//                 <Text style={styles.inputtext}>{this.props.command}</Text>
-//             </TouchableOpacity>
-//         </View>
-//       );
-//     }
-// }
 
 Chat.defaultProps={
     visitorname : 'Vaskar Sarma',
@@ -473,7 +397,6 @@ Chat.propTypes={
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      //backgroundColor:'#083002',
       marginTop: 20,
   },
   inputtext:{
@@ -493,7 +416,6 @@ const styles = StyleSheet.create({
    width: 40,
    height: 40,
    borderRadius: 40/2,
-   //backgroundColor: '#0A81D0',
    backgroundColor: '#083002',
    justifyContent:'center',
    alignItems: 'center',
@@ -505,7 +427,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50/2,
-    //backgroundColor: '#2FE30B',
     backgroundColor: '#083002',
     alignItems: 'center',
     justifyContent:'center',
@@ -516,7 +437,6 @@ systemcircle: {
     width: 50,
     height: 50,
     borderRadius: 50/2,
-    //backgroundColor: '#142FB2',
     backgroundColor: '#083002',
     alignItems: 'center',
     justifyContent:'center',
@@ -535,7 +455,6 @@ commandstyle:
  width: 250,
  height: 20,
  borderRadius: 20,
- //backgroundColor: '#0A81D0',
  backgroundColor: 'rgba(9, 206, 209, 0.46)',
  justifyContent:'center',
  alignItems: 'center',
