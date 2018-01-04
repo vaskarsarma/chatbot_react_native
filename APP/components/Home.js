@@ -11,19 +11,26 @@ import {
  Actions
 } from 'react-native-router-flux';
 
+import {validate} from "../../utils/validations";
+
 export default class Home extends Component {
     constructor(){
         super();
         this.state={
             name: '',
-            key: ''
+            key: '',
+            isError:false,
+            errorMsg:''
         };
     }
     
     onChangeText(value){
       this.setState({
            name: value
-      });                 
+      });
+      
+      let v=validate("name",value);
+      this.setState({isError: v[0],errorMsg: v[1]});
     }
 
     onChangeKey(value){
@@ -44,16 +51,17 @@ export default class Home extends Component {
                 <Picker.Item label="Select ChatBot Key" color="green" value="" />
                 <Picker.Item label="Chat-Bot Key 1" color="green" value="492a281b4eb64b8cbc326a5ac84d1cbe" />
                 <Picker.Item label="Chat-Bot Key 2" color="green" value="475db972aaf84669b935b8733a8a0f9a" />
-                </Picker>
-                
+                </Picker>                
                 <Text>{" "}</Text>
 
                 <TextInput 
-                 style={styles.nameinput}
+                 style={(this.state.isError)?styles.errorbox:styles.nameinput}
                  placeholder= "Please add your name"
                  value={this.state.name}
                  onChangeText={(value) => this.onChangeText(value)}
+                 maxLength={25}
                 ></TextInput>
+                <Text style={styles.errormessage}>{this.state.errorMsg}</Text>
               
                <TouchableOpacity 
                onPress={()=>{
@@ -109,5 +117,17 @@ export default class Home extends Component {
         },
         picker: {
             width: 250,
-          }
+          },
+        errorbox: {
+            height: 40,
+            borderWidth: 2,
+            borderColor: '#ff0000',
+            margin: 20,
+            width: 300
+        },
+        errormessage : {
+            color:"#FF0000",
+            margin: 20,
+            width: 300
+        },
         });

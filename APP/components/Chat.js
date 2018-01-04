@@ -346,7 +346,7 @@ export default class Chat extends Component {
                 <View style={styles.footersection}>
                     <TextInput 
                         style={styles.nameinput}
-                        placeholder= "add messages"
+                        placeholder= "Send messages"
                         value={this.state.textmsg}
                         onChangeText={(value) => this.onChangeText(value)}
                     ></TextInput>
