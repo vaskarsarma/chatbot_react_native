@@ -20,6 +20,7 @@ import PropTypes, { array } from 'prop-types';
 import Dialogflow from "react-native-dialogflow";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Tts from 'react-native-tts';
+import DLImages from "react-native-fetch-blob";
 
 export default class Chat extends Component {
 
